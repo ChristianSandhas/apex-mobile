@@ -58,7 +58,7 @@ class _HomePageState extends State<HomePage> {
     showAboutDialog(
       context: context,
       applicationName: 'ApeX Mobile App',
-      applicationVersion: 'Version 0.0.1',
+      applicationVersion: 'Version 0.1.0',
       applicationIcon: const Icon(Icons.timer_outlined, size: 40),
       children: const [
         SizedBox(height: 8),
@@ -223,7 +223,7 @@ class _AppDrawer extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(16),
               child: Text(
-                'Version 0.0.1\nCopyright 2026 Christian Sandhas',
+                'Version 0.1.0\nCopyright 2026 Christian Sandhas',
                 textAlign: TextAlign.center,
                 style: theme.textTheme.bodySmall?.copyWith(color: Colors.grey),
               ),
