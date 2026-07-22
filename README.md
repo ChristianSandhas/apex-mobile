@@ -7,6 +7,10 @@ Mitarbeiter stempeln sich damit vom Smartphone ein und aus, buchen auf Vorgänge
 Positionen und Kostenstellen um und können Buchungen für ein ganzes Team
 (Kolonne) auf einmal auslösen — manuell oder per QR-Code.
 
+<p align="center">
+  <img src="docs/zeiterfassung.png" alt="Zeiterfassung: laufende Buchung mit Vorgang, Kostenstelle und den Aktionen Pause, Umbuchen und Ausstempeln" width="320">
+</p>
+
 ## Funktionen
 
 - **Zeiterfassung** — Einstempeln, Pause/Fortsetzen, Umbuchen, Ausstempeln,
