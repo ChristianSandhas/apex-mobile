@@ -1,8 +1,8 @@
 name: Release
 
-# Sobald ein Tag der Form v* gepusht wird, entsteht daraus automatisch
-# ein GitHub-Release. Die Notes werden aus den Commits seit dem
-# vorherigen Tag erzeugt.
+# Sobald ein Tag der Form v* gepusht wird, wird eine Android-APK gebaut und
+# daraus automatisch ein GitHub-Release mit der APK als Anhang erzeugt.
+# Die Notes entstehen aus den Commits seit dem vorherigen Tag.
 on:
   push:
     tags:
@@ -19,6 +19,31 @@ jobs:
         with:
           fetch-depth: 0 # volle Historie, sonst fehlen die Notes
 
+      # AGP 9 / Gradle 9 brauchen ein aktuelles JDK. Der Bytecode-Zielwert
+      # (Java 17) steht unabhängig davon in android/app/build.gradle.kts.
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.44.6 # identisch zur Entwicklungsumgebung
+          channel: stable
+          cache: true
+
+      - run: flutter pub get
+
+      - run: flutter analyze
+
+      - name: APK bauen
+        run: flutter build apk --release
+
+      - name: APK benennen
+        run: |
+          mv build/app/outputs/flutter-apk/app-release.apk \
+             "apex-mobile-${GITHUB_REF_NAME}.apk"
+
       - name: Release anlegen
         env:
           GH_TOKEN: ${{ github.token }}
@@ -26,4 +51,5 @@ jobs:
           gh release create "$GITHUB_REF_NAME" \
             --title "$GITHUB_REF_NAME" \
             --generate-notes \
-            --verify-tag
+            --verify-tag \
+            "apex-mobile-${GITHUB_REF_NAME}.apk"

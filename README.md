@@ -65,6 +65,22 @@ Beim ersten Start werden Server-URL, Benutzername und Passwort abgefragt.
 Das iOS-Projekt kommt **ohne CocoaPods** aus — alle Plugins sind Swift
 Packages. Es gibt daher bewusst kein `ios/Podfile`.
 
+## Releases
+
+Ein Tag der Form `v*` löst den Workflow
+[`.github/workflows/release.yml`](.github/workflows/release.yml) aus. Er baut
+eine Android-APK und hängt sie an ein automatisch erzeugtes GitHub-Release:
+
+```bash
+git tag -a v0.2.0 -m "..." && git push origin v0.2.0
+```
+
+> **Hinweis zur APK:** Es ist noch kein eigener Keystore hinterlegt, deshalb
+> wird die APK mit dem Android-Debug-Key signiert (siehe `buildTypes.release`
+> in `android/app/build.gradle.kts`). Sie lässt sich direkt installieren, ist
+> aber **nicht** für den Play Store geeignet. Ein iOS-Build entsteht in CI
+> nicht — dafür wären Apple-Zertifikate als Repository-Secrets nötig.
+
 ## Lizenz
 
 Copyright (c) 2026 Christian Sandhas. Alle Rechte vorbehalten.
