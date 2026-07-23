@@ -52,6 +52,13 @@ Geschäftskontext/Glossar: `/home/christian/source/CLAUDE.md` (wird automatisch 
   (nicht löschen, sonst killt der OOM-Killer den Build).
 - Kein KVM/Display → kein Emulator. Test auf echtem Gerät per WLAN-Debugging (`adb pair`).
 
+## Doku-Pflege (Pflicht am Ende jedes Arbeitspakets)
+
+- `docs/CHANGELOG.md` – jede nennenswerte Änderung unter `[Unreleased]` eintragen
+  (Anwendersicht); bei Release Abschnitt auf die Version umbenennen.
+- Versionsnummer ist dreifach gepflegt: `pubspec.yaml` + zweimal in `home_page.dart`
+  (About-Dialog, Drawer-Footer) – bei Versionswechsel alle drei Stellen ändern.
+
 ## Konventionen / Stolpersteine
 
 - Tests: bisher nur ein Smoke-Test (`test/widget_test.dart`) – bei neuen Services gern Unit-Tests ergänzen.
