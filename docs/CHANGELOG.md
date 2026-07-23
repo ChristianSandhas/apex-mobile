@@ -5,6 +5,10 @@ Sicht: Was kann die App jetzt? (Anwendersicht, technische Details nur wo nötig.
 
 ## [Unreleased]
 
+## [0.1.2] – 2026-07-23
+
+- **Startseite:** Drei weitere Kacheln – Business Partner, Kommunikation, Kalender
+  (mit Icon und Text, Funktion folgt später).
 - **Doku:** Changelog eingeführt.
 
 ## [0.1.1] – 2026-07-23

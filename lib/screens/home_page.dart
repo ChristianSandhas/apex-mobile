@@ -56,7 +56,7 @@ class _HomePageState extends State<HomePage> {
     showAboutDialog(
       context: context,
       applicationName: 'ApeX Mobile App',
-      applicationVersion: 'Version 0.1.1',
+      applicationVersion: 'Version 0.1.2',
       applicationIcon: const Icon(Icons.timer_outlined, size: 40),
       children: const [
         SizedBox(height: 8),
@@ -76,6 +76,16 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  // Platzhalter für noch nicht umgesetzte Bereiche.
+  void _comingSoon(String label) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('$label – noch nicht verfügbar'),
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     // Datengetriebene Kachel-Liste – weitere Bereiche hier einfach ergänzen.
@@ -84,6 +94,21 @@ class _HomePageState extends State<HomePage> {
         icon: Icons.access_time,
         label: 'Zeiterfassung',
         onTap: _openZeiterfassung,
+      ),
+      _TileData(
+        icon: Icons.handshake,
+        label: 'Business Partner',
+        onTap: () => _comingSoon('Business Partner'),
+      ),
+      _TileData(
+        icon: Icons.forum,
+        label: 'Kommunikation',
+        onTap: () => _comingSoon('Kommunikation'),
+      ),
+      _TileData(
+        icon: Icons.calendar_month,
+        label: 'Kalender',
+        onTap: () => _comingSoon('Kalender'),
       ),
     ];
 
@@ -226,7 +251,7 @@ class _AppDrawer extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(16),
               child: Text(
-                'Version 0.1.1\nCopyright 2026 Christian Sandhas',
+                'Version 0.1.2\nCopyright 2026 Christian Sandhas',
                 textAlign: TextAlign.center,
                 style: theme.textTheme.bodySmall?.copyWith(color: Colors.grey),
               ),
