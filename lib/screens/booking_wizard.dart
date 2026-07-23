@@ -13,11 +13,7 @@ class BookingChoice {
 /// Buchungs-Assistent: Vorgang → (Position) → Kostenstelle.
 /// Gibt beim Abschluss eine [BookingChoice] zurück (oder null bei Abbruch).
 class BookingWizard extends StatefulWidget {
-  const BookingWizard({
-    super.key,
-    required this.service,
-    required this.status,
-  });
+  const BookingWizard({super.key, required this.service, required this.status});
 
   final TimeTrackingService service;
   final TimeStatus status;
@@ -47,14 +43,17 @@ class _BookingWizardState extends State<BookingWizard> {
   void initState() {
     super.initState();
     _lookups = widget.service.getLookups();
-    widget.service.getRecent().then((r) {
-      if (mounted) {
-        setState(() {
-          _recentPo = r.projectOrders;
-          _recentCc = r.costCenters;
-        });
-      }
-    }).catchError((_) {});
+    widget.service
+        .getRecent()
+        .then((r) {
+          if (mounted) {
+            setState(() {
+              _recentPo = r.projectOrders;
+              _recentCc = r.costCenters;
+            });
+          }
+        })
+        .catchError((_) {});
   }
 
   void _finish(String? costCenter) {
@@ -95,29 +94,36 @@ class _BookingWizardState extends State<BookingWizard> {
         setState(() => _step = _Step.vorgang);
         break;
       case _Step.kostenstelle:
-        setState(() => _step = _positionsShown ? _Step.position : _Step.vorgang);
+        setState(
+          () => _step = _positionsShown ? _Step.position : _Step.vorgang,
+        );
         break;
     }
   }
 
   String get _title => switch (_step) {
-        _Step.vorgang => 'Vorgang wählen',
-        _Step.position => 'Position wählen',
-        _Step.kostenstelle => 'Kostenstelle wählen',
-      };
+    _Step.vorgang => 'Vorgang wählen',
+    _Step.position => 'Position wählen',
+    _Step.kostenstelle => 'Kostenstelle wählen',
+  };
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(icon: const Icon(Icons.arrow_back), onPressed: _back),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: _back,
+        ),
         title: Text(_title),
       ),
-      body: switch (_step) {
-        _Step.vorgang => _buildVorgang(),
-        _Step.position => _buildPosition(),
-        _Step.kostenstelle => _buildKostenstelle(),
-      },
+      body: SafeArea(
+        child: switch (_step) {
+          _Step.vorgang => _buildVorgang(),
+          _Step.position => _buildPosition(),
+          _Step.kostenstelle => _buildKostenstelle(),
+        },
+      ),
     );
   }
 
@@ -208,11 +214,11 @@ class _BookingWizardState extends State<BookingWizard> {
   }
 
   Widget _error(String msg) => Center(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Text('Fehler beim Laden:\n$msg', textAlign: TextAlign.center),
-        ),
-      );
+    child: Padding(
+      padding: const EdgeInsets.all(24),
+      child: Text('Fehler beim Laden:\n$msg', textAlign: TextAlign.center),
+    ),
+  );
 }
 
 /// Durchsuchbare Auswahlliste mit „— ohne … —"-Zeile, „Zuletzt verwendet"
@@ -258,15 +264,15 @@ class _PickerListState<T> extends State<_PickerList<T>> {
   }
 
   Widget _header(String text) => Padding(
-        padding: const EdgeInsets.fromLTRB(16, 16, 16, 6),
-        child: Text(
-          text,
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: Theme.of(context).colorScheme.primary,
-          ),
-        ),
-      );
+    padding: const EdgeInsets.fromLTRB(16, 16, 16, 6),
+    child: Text(
+      text,
+      style: TextStyle(
+        fontWeight: FontWeight.bold,
+        color: Theme.of(context).colorScheme.primary,
+      ),
+    ),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -280,18 +286,22 @@ class _PickerListState<T> extends State<_PickerList<T>> {
           .toList();
       children.addAll(filtered.map(_tile));
       if (filtered.isEmpty) {
-        children.add(const Padding(
-          padding: EdgeInsets.all(24),
-          child: Text('Keine Treffer.', textAlign: TextAlign.center),
-        ));
+        children.add(
+          const Padding(
+            padding: EdgeInsets.all(24),
+            child: Text('Keine Treffer.', textAlign: TextAlign.center),
+          ),
+        );
       }
     } else {
       if (widget.allowNone) {
-        children.add(ListTile(
-          leading: const Icon(Icons.block, color: Colors.grey),
-          title: Text(widget.noneLabel),
-          onTap: widget.onNone,
-        ));
+        children.add(
+          ListTile(
+            leading: const Icon(Icons.block, color: Colors.grey),
+            title: Text(widget.noneLabel),
+            onTap: widget.onNone,
+          ),
+        );
       }
       if (widget.recent.isNotEmpty) {
         children.add(_header('Zuletzt verwendet'));

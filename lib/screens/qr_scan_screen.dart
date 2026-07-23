@@ -68,7 +68,8 @@ class _QrScanScreenState extends State<QrScanScreen> {
   void initState() {
     super.initState();
     _pending.employee = widget.targetEmployee;
-    _location.warmUp(); // Standort-Fix vorbereiten (und Berechtigung früh anfragen)
+    _location
+        .warmUp(); // Standort-Fix vorbereiten (und Berechtigung früh anfragen)
   }
 
   // Pause/Fortsetzen hängt am Zustand des Ziels (Mitglied) bzw. an mir selbst.
@@ -116,8 +117,10 @@ class _QrScanScreenState extends State<QrScanScreen> {
     switch (kind) {
       case 'EMP':
         if (!widget.status.canBookOthers) {
-          setState(() =>
-              _message = 'Buchen für andere ist nur mit Meister-Rolle möglich.');
+          setState(
+            () => _message =
+                'Buchen für andere ist nur mit Meister-Rolle möglich.',
+          );
           return;
         }
         setState(() => _pending.employee = value);
@@ -136,11 +139,15 @@ class _QrScanScreenState extends State<QrScanScreen> {
         await _book(); // Kostenstelle schließt die Buchung ab (wie im Assistenten)
       case 'BREAK':
       case 'PAUSE':
-        await _simple(() => _onBreak
-            ? widget.service.resume(employee: _pending.employee)
-            : widget.service.pause(employee: _pending.employee));
+        await _simple(
+          () => _onBreak
+              ? widget.service.resume(employee: _pending.employee)
+              : widget.service.pause(employee: _pending.employee),
+        );
       default: // END / ENDE
-        await _simple(() => widget.service.clockOut(employee: _pending.employee));
+        await _simple(
+          () => widget.service.clockOut(employee: _pending.employee),
+        );
     }
   }
 
@@ -228,7 +235,9 @@ class _QrScanScreenState extends State<QrScanScreen> {
       backgroundColor: Colors.black,
       appBar: AppBar(
         title: Text(
-          widget.targetName != null ? 'QR – ${widget.targetName}' : 'QR scannen',
+          widget.targetName != null
+              ? 'QR – ${widget.targetName}'
+              : 'QR scannen',
         ),
         backgroundColor: Colors.black,
         foregroundColor: Colors.white,
@@ -262,28 +271,33 @@ class _QrScanScreenState extends State<QrScanScreen> {
             child: Container(
               padding: const EdgeInsets.fromLTRB(20, 20, 20, 36),
               color: Colors.black.withValues(alpha: 0.6),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    _hint,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(color: Colors.white, fontSize: 15),
-                  ),
-                  if (_pending.canBook) ...[
-                    const SizedBox(height: 16),
-                    SizedBox(
-                      width: double.infinity,
-                      height: 52,
-                      child: FilledButton.icon(
-                        onPressed: _busy ? null : _book,
-                        icon: const Icon(Icons.check),
-                        label: const Text('Jetzt buchen',
-                            style: TextStyle(fontSize: 17)),
-                      ),
+              child: SafeArea(
+                top: false,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      _hint,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(color: Colors.white, fontSize: 15),
                     ),
+                    if (_pending.canBook) ...[
+                      const SizedBox(height: 16),
+                      SizedBox(
+                        width: double.infinity,
+                        height: 52,
+                        child: FilledButton.icon(
+                          onPressed: _busy ? null : _book,
+                          icon: const Icon(Icons.check),
+                          label: const Text(
+                            'Jetzt buchen',
+                            style: TextStyle(fontSize: 17),
+                          ),
+                        ),
+                      ),
+                    ],
                   ],
-                ],
+                ),
               ),
             ),
           ),

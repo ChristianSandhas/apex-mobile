@@ -8,12 +8,7 @@ import 'zeiterfassung_screen.dart';
 /// Die Haupt-Seite der App: Kachel-Übersicht der Bereiche.
 /// Oben rechts die Online-/Offline-Anzeige, oben links das Hamburger-Menü.
 class HomePage extends StatefulWidget {
-  const HomePage({
-    super.key,
-    required this.client,
-    this.userId,
-    this.fullName,
-  });
+  const HomePage({super.key, required this.client, this.userId, this.fullName});
 
   final FrappeClient client;
   final String? userId;
@@ -34,9 +29,12 @@ class _HomePageState extends State<HomePage> {
     _connectivity = ConnectivityService(widget.client)..start();
 
     if (_userId == null) {
-      widget.client.getLoggedUser().then((u) {
-        if (mounted) setState(() => _userId = u);
-      }).catchError((_) {});
+      widget.client
+          .getLoggedUser()
+          .then((u) {
+            if (mounted) setState(() => _userId = u);
+          })
+          .catchError((_) {});
     }
   }
 
@@ -58,7 +56,7 @@ class _HomePageState extends State<HomePage> {
     showAboutDialog(
       context: context,
       applicationName: 'ApeX Mobile App',
-      applicationVersion: 'Version 0.1.0',
+      applicationVersion: 'Version 0.1.1',
       applicationIcon: const Icon(Icons.timer_outlined, size: 40),
       children: const [
         SizedBox(height: 8),
@@ -106,16 +104,19 @@ class _HomePageState extends State<HomePage> {
           _showInfo();
         },
       ),
-      body: GridView.builder(
-        padding: const EdgeInsets.all(16),
-        gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-          maxCrossAxisExtent: 190, // ergibt 2 Kacheln auf dem Handy, mehr auf breiten Geräten
-          mainAxisSpacing: 16,
-          crossAxisSpacing: 16,
-          childAspectRatio: 1, // quadratisch
+      body: SafeArea(
+        child: GridView.builder(
+          padding: const EdgeInsets.all(16),
+          gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+            maxCrossAxisExtent:
+                190, // ergibt 2 Kacheln auf dem Handy, mehr auf breiten Geräten
+            mainAxisSpacing: 16,
+            crossAxisSpacing: 16,
+            childAspectRatio: 1, // quadratisch
+          ),
+          itemCount: tiles.length,
+          itemBuilder: (context, i) => _Tile(data: tiles[i]),
         ),
-        itemCount: tiles.length,
-        itemBuilder: (context, i) => _Tile(data: tiles[i]),
       ),
     );
   }
@@ -206,7 +207,9 @@ class _AppDrawer extends StatelessWidget {
                   ? null
                   : Text(
                       subtitle!,
-                      style: TextStyle(color: theme.colorScheme.onPrimaryContainer),
+                      style: TextStyle(
+                        color: theme.colorScheme.onPrimaryContainer,
+                      ),
                     ),
             ),
             ListTile(
@@ -223,7 +226,7 @@ class _AppDrawer extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(16),
               child: Text(
-                'Version 0.1.0\nCopyright 2026 Christian Sandhas',
+                'Version 0.1.1\nCopyright 2026 Christian Sandhas',
                 textAlign: TextAlign.center,
                 style: theme.textTheme.bodySmall?.copyWith(color: Colors.grey),
               ),

@@ -99,16 +99,18 @@ class _ZeiterfassungScreenState extends State<ZeiterfassungScreen> {
     final r = await _location.require();
     if (r.error != null) {
       if (!mounted) return null;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(r.error!),
-        behavior: SnackBarBehavior.floating,
-        action: r.openSettings
-            ? SnackBarAction(
-                label: 'Einstellungen',
-                onPressed: () => _location.openSettings(),
-              )
-            : null,
-      ));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(r.error!),
+          behavior: SnackBarBehavior.floating,
+          action: r.openSettings
+              ? SnackBarAction(
+                  label: 'Einstellungen',
+                  onPressed: () => _location.openSettings(),
+                )
+              : null,
+        ),
+      );
       return null;
     }
     return (lat: r.lat, lng: r.lng);
@@ -172,14 +174,16 @@ class _ZeiterfassungScreenState extends State<ZeiterfassungScreen> {
     }
     final geo = await _resolveGps(status);
     if (geo == null) return; // GPS Pflicht, aber nicht verfügbar
-    await _run(() => _service.book(
-          costCenter: choice.costCenter,
-          projectOrder: choice.projectOrder,
-          position: choice.position,
-          latitude: geo.lat,
-          longitude: geo.lng,
-          applyTeam: applyTeam,
-        ));
+    await _run(
+      () => _service.book(
+        costCenter: choice.costCenter,
+        projectOrder: choice.projectOrder,
+        position: choice.position,
+        latitude: geo.lat,
+        longitude: geo.lng,
+        applyTeam: applyTeam,
+      ),
+    );
   }
 
   // --- Team-Mitglied-Aktionen ------------------------------------------------
@@ -190,7 +194,12 @@ class _ZeiterfassungScreenState extends State<ZeiterfassungScreen> {
     await showModalBottomSheet<void>(
       context: context,
       builder: (ctx) {
-        Widget tile(IconData icon, String label, Color color, VoidCallback onTap) {
+        Widget tile(
+          IconData icon,
+          String label,
+          Color color,
+          VoidCallback onTap,
+        ) {
           return ListTile(
             leading: Icon(icon, color: color),
             title: Text(label),
@@ -203,26 +212,67 @@ class _ZeiterfassungScreenState extends State<ZeiterfassungScreen> {
 
         final items = <Widget>[];
         if (status.canScan) {
-          items.add(tile(Icons.qr_code_scanner, 'Scannen (QR)', Colors.blue,
-              () => _scanForMember(m)));
+          items.add(
+            tile(
+              Icons.qr_code_scanner,
+              'Scannen (QR)',
+              Colors.blue,
+              () => _scanForMember(m),
+            ),
+          );
         }
         switch (m.state) {
           case TimeState.out:
-            items.add(tile(Icons.play_arrow, 'Einstempeln', Colors.green,
-                () => _bookMember(m, status)));
+            items.add(
+              tile(
+                Icons.play_arrow,
+                'Einstempeln',
+                Colors.green,
+                () => _bookMember(m, status),
+              ),
+            );
           case TimeState.working:
-            items.add(tile(Icons.pause, 'Pause', Colors.orange,
-                () => _run(() => _service.pause(employee: m.employee))));
-            items.add(tile(Icons.swap_horiz, 'Umbuchen',
+            items.add(
+              tile(
+                Icons.pause,
+                'Pause',
+                Colors.orange,
+                () => _run(() => _service.pause(employee: m.employee)),
+              ),
+            );
+            items.add(
+              tile(
+                Icons.swap_horiz,
+                'Umbuchen',
                 Theme.of(context).colorScheme.primary,
-                () => _bookMember(m, status)));
-            items.add(tile(Icons.stop, 'Ausstempeln', Colors.red,
-                () => _run(() => _service.clockOut(employee: m.employee))));
+                () => _bookMember(m, status),
+              ),
+            );
+            items.add(
+              tile(
+                Icons.stop,
+                'Ausstempeln',
+                Colors.red,
+                () => _run(() => _service.clockOut(employee: m.employee)),
+              ),
+            );
           case TimeState.paused:
-            items.add(tile(Icons.play_arrow, 'Fortsetzen', Colors.green,
-                () => _run(() => _service.resume(employee: m.employee))));
-            items.add(tile(Icons.stop, 'Ausstempeln', Colors.red,
-                () => _run(() => _service.clockOut(employee: m.employee))));
+            items.add(
+              tile(
+                Icons.play_arrow,
+                'Fortsetzen',
+                Colors.green,
+                () => _run(() => _service.resume(employee: m.employee)),
+              ),
+            );
+            items.add(
+              tile(
+                Icons.stop,
+                'Ausstempeln',
+                Colors.red,
+                () => _run(() => _service.clockOut(employee: m.employee)),
+              ),
+            );
         }
 
         return SafeArea(
@@ -231,9 +281,12 @@ class _ZeiterfassungScreenState extends State<ZeiterfassungScreen> {
             children: [
               Padding(
                 padding: const EdgeInsets.all(16),
-                child: Text(m.name,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold)),
+                child: Text(
+                  m.name,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
               const Divider(height: 1),
               ...items,
@@ -267,14 +320,16 @@ class _ZeiterfassungScreenState extends State<ZeiterfassungScreen> {
     if (choice == null) return;
     final geo = await _resolveGps(status);
     if (geo == null) return; // GPS Pflicht, aber nicht verfügbar
-    await _run(() => _service.book(
-          costCenter: choice.costCenter,
-          projectOrder: choice.projectOrder,
-          position: choice.position,
-          latitude: geo.lat,
-          longitude: geo.lng,
-          employee: m.employee,
-        ));
+    await _run(
+      () => _service.book(
+        costCenter: choice.costCenter,
+        projectOrder: choice.projectOrder,
+        position: choice.position,
+        latitude: geo.lat,
+        longitude: geo.lng,
+        employee: m.employee,
+      ),
+    );
   }
 
   Future<void> _openScan() async {
@@ -319,15 +374,17 @@ class _ZeiterfassungScreenState extends State<ZeiterfassungScreen> {
           ConnectionIndicator(connectivity: widget.connectivity),
         ],
       ),
-      body: Stack(
-        children: [
-          RefreshIndicator(onRefresh: _load, child: _buildBody()),
-          if (_busy)
-            Container(
-              color: Colors.black.withValues(alpha: 0.15),
-              child: const Center(child: CircularProgressIndicator()),
-            ),
-        ],
+      body: SafeArea(
+        child: Stack(
+          children: [
+            RefreshIndicator(onRefresh: _load, child: _buildBody()),
+            if (_busy)
+              Container(
+                color: Colors.black.withValues(alpha: 0.15),
+                child: const Center(child: CircularProgressIndicator()),
+              ),
+          ],
+        ),
       ),
     );
   }
@@ -355,15 +412,16 @@ class _ZeiterfassungScreenState extends State<ZeiterfassungScreen> {
               Text('Team', style: Theme.of(context).textTheme.titleMedium),
               const Spacer(),
               if (status.teamUntil != null)
-                Text('bis ${status.teamUntil}',
-                    style: Theme.of(context).textTheme.bodySmall),
+                Text(
+                  'bis ${status.teamUntil}',
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
             ],
           ),
           const SizedBox(height: 8),
-          ...status.team.map((m) => _TeamCard(
-                member: m,
-                onTap: () => _memberActions(m),
-              )),
+          ...status.team.map(
+            (m) => _TeamCard(member: m, onTap: () => _memberActions(m)),
+          ),
         ],
       ],
     );
@@ -372,8 +430,12 @@ class _ZeiterfassungScreenState extends State<ZeiterfassungScreen> {
   List<Widget> _ownActions(TimeStatus status) {
     final scan = status.canScan
         ? [
-            _bigButton(Icons.qr_code_scanner, 'Scannen (QR)', Colors.blue,
-                _openScan),
+            _bigButton(
+              Icons.qr_code_scanner,
+              'Scannen (QR)',
+              Colors.blue,
+              _openScan,
+            ),
             const SizedBox(height: 12),
           ]
         : <Widget>[];
@@ -383,35 +445,65 @@ class _ZeiterfassungScreenState extends State<ZeiterfassungScreen> {
         return [
           ...scan,
           if (status.canManual)
-            _bigButton(Icons.play_arrow, 'Einstempeln', Colors.green, _bookSelf),
+            _bigButton(
+              Icons.play_arrow,
+              'Einstempeln',
+              Colors.green,
+              _bookSelf,
+            ),
         ];
       case TimeState.working:
         return [
           ...scan,
-          _bigButton(Icons.pause, 'Pause', Colors.orange,
-              () => _selfAction((at) => _service.pause(applyTeam: at))),
+          _bigButton(
+            Icons.pause,
+            'Pause',
+            Colors.orange,
+            () => _selfAction((at) => _service.pause(applyTeam: at)),
+          ),
           const SizedBox(height: 12),
           if (status.canManual) ...[
-            _bigButton(Icons.swap_horiz, 'Umbuchen',
-                Theme.of(context).colorScheme.primary, _bookSelf),
+            _bigButton(
+              Icons.swap_horiz,
+              'Umbuchen',
+              Theme.of(context).colorScheme.primary,
+              _bookSelf,
+            ),
             const SizedBox(height: 12),
           ],
-          _bigButton(Icons.stop, 'Ausstempeln', Colors.red,
-              () => _selfAction((at) => _service.clockOut(applyTeam: at))),
+          _bigButton(
+            Icons.stop,
+            'Ausstempeln',
+            Colors.red,
+            () => _selfAction((at) => _service.clockOut(applyTeam: at)),
+          ),
         ];
       case TimeState.paused:
         return [
           ...scan,
-          _bigButton(Icons.play_arrow, 'Fortsetzen', Colors.green,
-              () => _selfAction((at) => _service.resume(applyTeam: at))),
+          _bigButton(
+            Icons.play_arrow,
+            'Fortsetzen',
+            Colors.green,
+            () => _selfAction((at) => _service.resume(applyTeam: at)),
+          ),
           const SizedBox(height: 12),
-          _bigButton(Icons.stop, 'Ausstempeln', Colors.red,
-              () => _selfAction((at) => _service.clockOut(applyTeam: at))),
+          _bigButton(
+            Icons.stop,
+            'Ausstempeln',
+            Colors.red,
+            () => _selfAction((at) => _service.clockOut(applyTeam: at)),
+          ),
         ];
     }
   }
 
-  Widget _bigButton(IconData icon, String label, Color color, VoidCallback onTap) {
+  Widget _bigButton(
+    IconData icon,
+    String label,
+    Color color,
+    VoidCallback onTap,
+  ) {
     return SizedBox(
       height: 60,
       child: FilledButton.icon(
@@ -462,10 +554,23 @@ class _StatusCard extends StatelessWidget {
 
   final TimeStatus status;
 
-  ({String text, Color color, IconData icon}) get _badge => switch (status.state) {
-        TimeState.working => (text: 'Anwesend', color: Colors.green, icon: Icons.work),
-        TimeState.paused => (text: 'In Pause', color: Colors.orange, icon: Icons.pause_circle),
-        TimeState.out => (text: 'Ausgestempelt', color: Colors.grey, icon: Icons.logout),
+  ({String text, Color color, IconData icon}) get _badge =>
+      switch (status.state) {
+        TimeState.working => (
+          text: 'Anwesend',
+          color: Colors.green,
+          icon: Icons.work,
+        ),
+        TimeState.paused => (
+          text: 'In Pause',
+          color: Colors.orange,
+          icon: Icons.pause_circle,
+        ),
+        TimeState.out => (
+          text: 'Ausgestempelt',
+          color: Colors.grey,
+          icon: Icons.logout,
+        ),
       };
 
   String _elapsed() {
@@ -502,7 +607,10 @@ class _StatusCard extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
                   decoration: BoxDecoration(
                     color: badge.color.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(20),
@@ -539,18 +647,36 @@ class _StatusCard extends StatelessWidget {
               if (_hasBooking(running!)) ...[
                 const Divider(height: 24),
                 if (running.vorgangDisplay != null)
-                  _row(context, Icons.assignment, 'Vorgang', running.vorgangDisplay!,
-                      sub: running.customer),
+                  _row(
+                    context,
+                    Icons.assignment,
+                    'Vorgang',
+                    running.vorgangDisplay!,
+                    sub: running.customer,
+                  ),
                 if (running.positionDisplay != null)
-                  _row(context, Icons.list_alt, 'Position', running.positionDisplay!),
+                  _row(
+                    context,
+                    Icons.list_alt,
+                    'Position',
+                    running.positionDisplay!,
+                  ),
                 if (running.kostenstelleDisplay != null)
-                  _row(context, Icons.account_balance, 'Kostenstelle',
-                      running.kostenstelleDisplay!),
+                  _row(
+                    context,
+                    Icons.account_balance,
+                    'Kostenstelle',
+                    running.kostenstelleDisplay!,
+                  ),
               ],
             ],
             const Divider(height: 24),
-            _row(context, Icons.today, 'Heute',
-                '${status.todayHours.toStringAsFixed(2)} h'),
+            _row(
+              context,
+              Icons.today,
+              'Heute',
+              '${status.todayHours.toStringAsFixed(2)} h',
+            ),
           ],
         ),
       ),
@@ -562,8 +688,13 @@ class _StatusCard extends StatelessWidget {
       r.positionDisplay != null ||
       r.kostenstelleDisplay != null;
 
-  Widget _row(BuildContext context, IconData icon, String label, String value,
-      {String? sub}) {
+  Widget _row(
+    BuildContext context,
+    IconData icon,
+    String label,
+    String value, {
+    String? sub,
+  }) {
     final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5),
@@ -574,7 +705,10 @@ class _StatusCard extends StatelessWidget {
           const SizedBox(width: 10),
           SizedBox(
             width: 120,
-            child: Text(label, style: const TextStyle(fontWeight: FontWeight.w600)),
+            child: Text(
+              label,
+              style: const TextStyle(fontWeight: FontWeight.w600),
+            ),
           ),
           Expanded(
             child: Column(
@@ -582,9 +716,11 @@ class _StatusCard extends StatelessWidget {
               children: [
                 Text(value, textAlign: TextAlign.right),
                 if (sub != null && sub.isNotEmpty)
-                  Text(sub,
-                      textAlign: TextAlign.right,
-                      style: theme.textTheme.bodySmall),
+                  Text(
+                    sub,
+                    textAlign: TextAlign.right,
+                    style: theme.textTheme.bodySmall,
+                  ),
               ],
             ),
           ),
@@ -612,10 +748,16 @@ class _ErrorView extends StatelessWidget {
         Text(
           'Status konnte nicht geladen werden',
           textAlign: TextAlign.center,
-          style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+          style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
         ),
         const SizedBox(height: 12),
-        Text(message, textAlign: TextAlign.center, style: theme.textTheme.bodySmall),
+        Text(
+          message,
+          textAlign: TextAlign.center,
+          style: theme.textTheme.bodySmall,
+        ),
         const SizedBox(height: 24),
         Center(
           child: FilledButton.icon(
