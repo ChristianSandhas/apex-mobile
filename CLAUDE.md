@@ -44,6 +44,14 @@ Geschäftskontext/Glossar: `/home/christian/source/CLAUDE.md` (wird automatisch 
   Achtung: APK ist mit dem **Debug-Key** signiert – vor einem Play-Store-Release
   eigenen Keystore einrichten. Kein iOS-Build in CI (Apple-Zertifikate fehlen).
 
+## Lokale Umgebung (ubuntu-dev-01)
+
+- Flutter-SDK: `~/flutter`, JDK 21: `~/java`, Android-SDK: `~/android-sdk` (alles in PATH/ENV via ~/.bashrc).
+- Lokaler APK-Build: `flutter build apk --debug` funktioniert. Achtung: Der Rechner hat nur 7 GB RAM –
+  `~/.gradle/gradle.properties` drosselt Gradle auf 2 GB und überstimmt die 8G-Vorgabe des Repos
+  (nicht löschen, sonst killt der OOM-Killer den Build).
+- Kein KVM/Display → kein Emulator. Test auf echtem Gerät per WLAN-Debugging (`adb pair`).
+
 ## Konventionen / Stolpersteine
 
 - Tests: bisher nur ein Smoke-Test (`test/widget_test.dart`) – bei neuen Services gern Unit-Tests ergänzen.
