@@ -42,7 +42,8 @@ Geschäftskontext/Glossar: `/home/christian/source/CLAUDE.md` (wird automatisch 
 - `flutter analyze` (läuft auch in CI), `flutter test`
 - Release: Git-Tag `v*` pushen → GitHub Actions baut APK und erstellt das Release.
   Achtung: APK ist mit dem **Debug-Key** signiert – vor einem Play-Store-Release
-  eigenen Keystore einrichten. Kein iOS-Build in CI (Apple-Zertifikate fehlen).
+  eigenen Keystore einrichten. Kein iOS-Build in CI (Apple-Zertifikate fehlen) –
+  iOS wird lokal auf dem Mac gebaut/deployt (siehe „Lokale Umgebung (macOS – iOS)").
 
 ## Lokale Umgebung (ubuntu-dev-01)
 
@@ -51,6 +52,21 @@ Geschäftskontext/Glossar: `/home/christian/source/CLAUDE.md` (wird automatisch 
   `~/.gradle/gradle.properties` drosselt Gradle auf 2 GB und überstimmt die 8G-Vorgabe des Repos
   (nicht löschen, sonst killt der OOM-Killer den Build).
 - Kein KVM/Display → kein Emulator. Test auf echtem Gerät per WLAN-Debugging (`adb pair`).
+
+## Lokale Umgebung (macOS – iOS)
+
+- Der **iOS-Build läuft nur auf dem Mac** (Xcode nötig; CI kann kein iOS). Flutter-SDK
+  unter `~/development/flutter`. iOS ohne CocoaPods (Swift Packages).
+- Signing: `CODE_SIGN_STYLE = Automatic`, `DEVELOPMENT_TEAM = 8YCLESCMSS`
+  (Identität „Apple Development: c.sandhas@sandhas.com"), gesetzt in
+  `ios/Runner.xcodeproj/project.pbxproj`. Kompilier-Check ohne Signing:
+  `flutter build ios --debug --no-codesign`.
+- Deploy aufs echte iPhone: `flutter run --release -d <device-id>` (auch per WLAN-Gerät).
+  Achtung: Development-signiert → das Provisioning-Profil läuft nach **~7 Tagen** ab,
+  dann neu installieren. Für dauerhaft/verteilbar: TestFlight/Distribution-Zertifikat.
+- Simulator: `flutter run -d <sim-id>` (Debug, Hot Reload). Geräte-IDs via `flutter devices`.
+- Hintergrund-`flutter run` ohne TTY beendet sich nach dem Start selbst
+  („Lost connection to device") – die App bleibt installiert, aber ohne Hot Reload.
 
 ## Doku-Pflege (Pflicht am Ende jedes Arbeitspakets)
 
@@ -65,3 +81,7 @@ Geschäftskontext/Glossar: `/home/christian/source/CLAUDE.md` (wird automatisch 
 - Fehlt `use_gps` in der Server-Config, gilt GPS als Pflicht (`time_models.dart`).
 - Schnittstellen-Änderungen immer **zusammen mit dem Backend** denken (apex `workforce/mobile.py`) –
   bei übergreifenden Prüfungen den code-pruefer aus einer `~/source`-Session nutzen.
+- **Querformat/Notch:** Scaffold-`body` in `SafeArea` wickeln, sonst rutscht Inhalt unter
+  Kamera-Insel/Systemleisten (bei AppBar bleibt `top` wirkungslos, schadet aber nicht).
+  Vollflächige Inhalte (z. B. Kamera im QR-Scan) bewusst außerhalb lassen und nur die
+  Overlays mit `SafeArea(top: false)` schützen.
